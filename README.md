@@ -1,4 +1,4 @@
-# whereGT
+# Who is the Ground Truth
 - 眠気吹き飛ぶGT対決。あなたの指と直感でAIのGround Truthを叩きのめせ。
 - Pixabay探索・アルバムの刺客・ラベルおみくじの3ステージ。手持ちの一枚でAIを惑わせよう。
 - Core MLローカル推論で即ジャッジ、写真もその場で完結。スピード勝負で言い訳の余地なし。
