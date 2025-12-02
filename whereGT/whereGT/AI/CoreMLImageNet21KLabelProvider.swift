@@ -3,6 +3,7 @@ import UIKit
 
 protocol AILabelProvider {
     var loadStatusDescription: String { get }
+    var classLabels: [String]? { get }
     func predictLabel(for image: UIImage, from labels: [LabelItem]) -> LabelItem?
 }
 
@@ -12,20 +13,32 @@ final class CoreMLImageNet21KLabelProvider: AILabelProvider {
     private let imageInputName: String?
     private let imageConstraint: MLImageConstraint?
     private let fallbackSize = CGSize(width: 224, height: 224)
+    /// Class labels embedded in the CoreML model (if any). Used to align label repository with the model output size.
+    private(set) var classLabels: [String]?
     private(set) var loadStatusDescription: String = "Searching for CoreML model..."
 
     /// Candidate model base names (without extension). Kept for fast-path.
-    private let candidateModelNames = [
+    private static let defaultCandidateModelNames = [
         "vit_small_patch16_224_in21k",
         "deit_small_patch16_224"
     ]
+    private let candidateModelNames: [String]
     /// Prefer compiled .mlmodelc in the built app bundle, then raw .mlpackage (source).
     private let candidateExtensions = ["mlmodelc", "mlpackage"]
 
-    init() {
+    init(preferredModelOrder: [String] = []) {
+        var mergedOrder: [String] = []
+        mergedOrder.append(contentsOf: preferredModelOrder)
+        for name in Self.defaultCandidateModelNames where !mergedOrder.contains(name) {
+            mergedOrder.append(name)
+        }
+        self.candidateModelNames = mergedOrder
+
         var loadedModel: MLModel?
         var inputName: String?
         var constraint: MLImageConstraint?
+        var embeddedClassLabels: [String]?
+        var fallbackClassCount: Int?
 
         // 共通の設定: CPU で実行（MPSGraph 非対応環境でも動かす）
         let cpuOnlyConfig = MLModelConfiguration()
@@ -42,6 +55,8 @@ final class CoreMLImageNet21KLabelProvider: AILabelProvider {
                             inputName = imageEntry.key
                             constraint = imageEntry.value.imageConstraint
                         }
+                        embeddedClassLabels = Self.extractClassLabels(from: m.modelDescription.classLabels)
+                        fallbackClassCount = Self.deriveClassCount(from: m)
                         loadStatusDescription = "Loaded model: \(url.lastPathComponent)"
                         break outer
                     } catch {
@@ -59,6 +74,8 @@ final class CoreMLImageNet21KLabelProvider: AILabelProvider {
                     inputName = imageEntry.key
                     constraint = imageEntry.value.imageConstraint
                 }
+                embeddedClassLabels = Self.extractClassLabels(from: m.modelDescription.classLabels)
+                fallbackClassCount = Self.deriveClassCount(from: m)
                 print("Loaded CoreML model at: \(url.lastPathComponent)")
                 loadStatusDescription = "Loaded model: \(url.lastPathComponent)"
             } else {
@@ -80,6 +97,14 @@ final class CoreMLImageNet21KLabelProvider: AILabelProvider {
         self.model = loadedModel
         self.imageInputName = inputName
         self.imageConstraint = constraint
+        if let embeddedClassLabels, !embeddedClassLabels.isEmpty {
+            self.classLabels = embeddedClassLabels
+        } else if let count = fallbackClassCount, count > 0 {
+            self.classLabels = (0..<count).map { "cls_\($0)" }
+            loadStatusDescription += " (using \(count) placeholder labels)"
+        } else {
+            self.classLabels = nil
+        }
     }
 
     func predictLabel(for image: UIImage, from labels: [LabelItem]) -> LabelItem? {
@@ -247,5 +272,35 @@ final class CoreMLImageNet21KLabelProvider: AILabelProvider {
             }
         }
         return bestIndex
+    }
+
+    private static func extractClassLabels(from raw: Any?) -> [String]? {
+        if let strings = raw as? [String] {
+            return strings
+        }
+        if let numbers = raw as? [NSNumber] {
+            return numbers.map { $0.stringValue }
+        }
+        return nil
+    }
+
+    private static func deriveClassCount(from model: MLModel) -> Int? {
+        // Try logits output, otherwise any multiArray output.
+        let outputs = model.modelDescription.outputDescriptionsByName
+        if let logits = outputs["logits"]?.multiArrayConstraint,
+           let count = elementCount(from: logits.shape) {
+            return count
+        }
+        if let any = outputs.values.compactMap({ $0.multiArrayConstraint }).first,
+           let count = elementCount(from: any.shape) {
+            return count
+        }
+        return nil
+    }
+
+    private static func elementCount(from shape: [NSNumber]) -> Int? {
+        let dims = shape.map { $0.intValue }.filter { $0 > 0 }
+        guard !dims.isEmpty else { return nil }
+        return dims.reduce(1, *)
     }
 }
