@@ -29,9 +29,31 @@
 		5A36CE012EDE25D3005E4CDB /* whereGTUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = whereGTUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		5A36CECE2EDEEEF6005E4CDB /* Exceptions for "whereGT" folder in "whereGT" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+			);
+			target = 5A36CDE42EDE25D1005E4CDB /* whereGT */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+		5A36CECF2EDEEEF6005E4CDB /* Exceptions for "whereGT" folder in "Copy Bundle Resources" phase from "whereGT" target */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			buildPhase = 5A36CDE32EDE25D1005E4CDB /* Resources */;
+			membershipExceptions = (
+			);
+		};
+/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		5A36CDE72EDE25D1005E4CDB /* whereGT */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				5A36CECE2EDEEEF6005E4CDB /* Exceptions for "whereGT" folder in "whereGT" target */,
+				5A36CECF2EDEEEF6005E4CDB /* Exceptions for "whereGT" folder in "Copy Bundle Resources" phase from "whereGT" target */,
+			);
 			path = whereGT;
 			sourceTree = "<group>";
 		};
@@ -170,6 +192,9 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
+				KnownAssetTags = (
+					New,
+				);
 				LastSwiftUpdateCheck = 2610;
 				LastUpgradeCheck = 2610;
 				TargetAttributes = {

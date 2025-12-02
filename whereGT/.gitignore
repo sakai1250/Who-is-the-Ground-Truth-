@@ -1,0 +1,40 @@
+# macOS
+.DS_Store
+*.swp
+*.swo
+
+.env
+
+# Xcode
+build/
+DerivedData/
+xcuserdata/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+*.moved-aside
+*.xccheckout
+*.xcscmblueprint
+*.xcuserstate
+
+# Swift Package Manager
+.build/
+.swiftpm/
+Packages/
+
+# Dependencies
+Pods/
+Carthage/Build/
+
+# IDE
+.vscode/
+.idea/
+
+# Large assets
+*.mlpackage/
+.dist/
