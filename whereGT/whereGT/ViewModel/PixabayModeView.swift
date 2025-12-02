@@ -137,8 +137,6 @@ struct PixabayModeView: View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Status")
                 .font(.headline)
-            statusRow(title: "Mode", message: viewModel.gameMode.statusHint)
-            statusRow(title: "Model", message: viewModel.aiModelStatusMessage)
             statusRow(title: "Prediction", message: viewModel.predictionStatusMessage)
         }
         .padding(.vertical, 4)

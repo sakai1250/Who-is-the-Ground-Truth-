@@ -57,7 +57,7 @@ final class CoreMLImageNet21KLabelProvider: AILabelProvider {
                         }
                         embeddedClassLabels = Self.extractClassLabels(from: m.modelDescription.classLabels)
                         fallbackClassCount = Self.deriveClassCount(from: m)
-                        loadStatusDescription = "Loaded model: \(url.lastPathComponent)"
+                        loadStatusDescription = ""
                         break outer
                     } catch {
                         print("Failed to load \(url.lastPathComponent): \(error)")
@@ -77,7 +77,7 @@ final class CoreMLImageNet21KLabelProvider: AILabelProvider {
                 embeddedClassLabels = Self.extractClassLabels(from: m.modelDescription.classLabels)
                 fallbackClassCount = Self.deriveClassCount(from: m)
                 print("Loaded CoreML model at: \(url.lastPathComponent)")
-                loadStatusDescription = "Loaded model: \(url.lastPathComponent)"
+                loadStatusDescription = ""
             } else {
                 // Debug: list what we can actually see in the bundle
                 let found = Self.allModelURLsInBundle()

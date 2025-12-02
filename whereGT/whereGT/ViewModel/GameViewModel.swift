@@ -13,7 +13,7 @@ final class GameViewModel: ObservableObject {
     @Published var aiLabel: LabelItem?
     @Published var labelStatusMessage: String = "Labels not loaded"
     @Published var aiModelStatusMessage: String
-    @Published var predictionStatusMessage: String = "Waiting for image"
+    @Published var predictionStatusMessage: String = ""
     @Published var isRunningPrediction: Bool = false
     @Published var challengeLabel: LabelItem?
     @Published var challengeStatusMessage: String

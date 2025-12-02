@@ -179,7 +179,7 @@ struct LabelRouletteView: View {
                             .foregroundStyle(.secondary)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         if let label = viewModel.challengeLabel {
-                            Text("秘密のお題をロック中 (ID: \(label.id) / 答えは判定で公開)")
+                            Text("秘密のお題をロック中 答えは判定で公開)")
                                 .font(.caption2)
                                 .foregroundStyle(.secondary)
                                 .padding(.top, 2)
@@ -307,8 +307,6 @@ struct LabelRouletteView: View {
             Text("Status")
                 .font(.headline)
             statusRow(title: "Mode", message: viewModel.gameMode.statusHint)
-            statusRow(title: "Model", message: viewModel.aiModelStatusMessage)
-            statusRow(title: "Prediction", message: viewModel.predictionStatusMessage)
         }
         .padding(.vertical, 4)
     }
