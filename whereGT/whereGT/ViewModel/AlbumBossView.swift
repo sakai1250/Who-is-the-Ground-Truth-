@@ -7,7 +7,7 @@ struct AlbumBossView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: 18) {
                 modelPicker
 
                 Divider()
@@ -106,7 +106,7 @@ struct AlbumBossView: View {
 
     private var aiLabelSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("AI's guess")
+            Text("AI Prediction")
                 .font(.headline)
             if let aiLabel = viewModel.aiLabel {
                 Text(labelDisplayText(for: aiLabel))
@@ -132,7 +132,7 @@ struct AlbumBossView: View {
 
     private var userAnswerSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Your answer (type to search labels)")
+            Text("Your Answer")
                 .font(.headline)
             TextField("Start typing a label", text: $viewModel.userQuery)
                 .textFieldStyle(.roundedBorder)
@@ -210,10 +210,9 @@ struct AlbumBossView: View {
 
     private var statusSection: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("Load / prediction status")
+            Text("Status")
                 .font(.headline)
             statusRow(title: "Mode", message: viewModel.gameMode.statusHint)
-            statusRow(title: "Labels", message: viewModel.labelStatusMessage)
             statusRow(title: "Model", message: viewModel.aiModelStatusMessage)
             statusRow(title: "Prediction", message: viewModel.predictionStatusMessage)
         }

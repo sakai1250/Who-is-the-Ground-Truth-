@@ -1,59 +1,111 @@
 import SwiftUI
 
-private enum AppTab: Hashable {
-    case pixabay
-    case album
-    case roulette
+private enum AppRoute: Hashable {
+    case modeSelection
+    case mode(GameMode)
 }
 
 struct GameView: View {
     @ObservedObject var viewModel: GameViewModel
-    @State private var selectedTab: AppTab = .pixabay
+    @State private var path: [AppRoute] = []
 
     var body: some View {
-        TabView(selection: $selectedTab) {
-            NavigationStack {
-                PixabayModeView(viewModel: viewModel)
+        NavigationStack(path: $path) {
+            StartView {
+                // スタート画面からモード選択へ
+                path.append(.modeSelection)
             }
-            .tabItem {
-                Label("Pixabay", systemImage: "photo.on.rectangle")
+            .navigationDestination(for: AppRoute.self) { route in
+                switch route {
+                case .modeSelection:
+                    ModeSelectionView { selected in
+                        // モードをセットして各モード画面へプッシュ
+                        if viewModel.gameMode != selected {
+                            viewModel.gameMode = selected
+                        }
+                        path.append(.mode(selected))
+                    }
+                case .mode(let mode):
+                    // 副作用は .onAppear へ移動（ViewBuilder が Void を受けないようにする）
+                    modeView(for: mode)
+                        .onAppear {
+                            if viewModel.gameMode != mode {
+                                viewModel.gameMode = mode
+                            }
+                        }
+                }
             }
-            .tag(AppTab.pixabay)
-
-            NavigationStack {
-                AlbumBossView(viewModel: viewModel)
-            }
-            .tabItem {
-                Label("Album", systemImage: "photo.on.rectangle.angled")
-            }
-            .tag(AppTab.album)
-
-            NavigationStack {
-                LabelRouletteView(viewModel: viewModel)
-            }
-            .tabItem {
-                Label("Roulette", systemImage: "die.face.5")
-            }
-            .tag(AppTab.roulette)
-        }
-        .onAppear {
-            // 初期タブに応じてモードを合わせる
-            applyMode(for: selectedTab)
-        }
-        .onChange(of: selectedTab) { _, newValue in
-            applyMode(for: newValue)
         }
     }
 
-    private func applyMode(for tab: AppTab) {
-        switch tab {
-        case .pixabay:
-            if viewModel.gameMode != .pixabaySearch { viewModel.gameMode = .pixabaySearch }
-        case .album:
-            if viewModel.gameMode != .albumBoss { viewModel.gameMode = .albumBoss }
-        case .roulette:
-            if viewModel.gameMode != .labelRoulette { viewModel.gameMode = .labelRoulette }
+    @ViewBuilder
+    private func modeView(for mode: GameMode) -> some View {
+        switch mode {
+        case .pixabaySearch:
+            PixabayModeView(viewModel: viewModel)
+                .navigationTitle("Stock Safari")
+        case .albumBoss:
+            AlbumBossView(viewModel: viewModel)
+                .navigationTitle("Album Boss")
+        case .labelRoulette:
+            LabelRouletteView(viewModel: viewModel)
+                .navigationTitle("Label Roulette")
         }
+    }
+}
+
+private struct StartView: View {
+    let onStart: () -> Void
+
+    var body: some View {
+        VStack(spacing: 24) {
+            Spacer()
+            VStack(spacing: 8) {
+                Text("WhereGT")
+                    .font(.largeTitle.weight(.bold))
+                Text("画像で AI と勝負しよう")
+                    .foregroundStyle(.secondary)
+            }
+            Button(action: onStart) {
+                Label("Start", systemImage: "play.fill")
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.borderedProminent)
+            .padding(.horizontal)
+            Spacer()
+        }
+        .padding()
+        .navigationTitle("Start")
+    }
+}
+
+private struct ModeSelectionView: View {
+    let onSelect: (GameMode) -> Void
+
+    var body: some View {
+        List {
+            ForEach(GameMode.allCases) { mode in
+                Button {
+                    onSelect(mode)
+                } label: {
+                    HStack {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(mode.displayName)
+                                .font(.headline)
+                            Text(mode.description)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .foregroundStyle(.tertiary)
+                    }
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .navigationTitle("Select Mode")
     }
 }
 

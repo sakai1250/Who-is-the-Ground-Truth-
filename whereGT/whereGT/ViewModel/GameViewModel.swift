@@ -280,7 +280,7 @@ final class GameViewModel: ObservableObject {
                 let uiImage = try await downloadPixabayImage(image)
                 await MainActor.run {
                     let description = "Label Roulette: \(label.primaryName)"
-                    self.updateImage(uiImage, sourceType: .pixabay, description: description)
+                    self.updateImage(uiImage, sourceType: .pixabay, description: "")
                     self.challengeStatusMessage = forQuiz ? "第\(self.quizCurrentIndex)問：お題は秘密。AI とあなた、どちらが当てる？" : "お題は秘密。AI とあなた、どちらが当てる？"
                     self.isLoadingPixabay = false
                 }

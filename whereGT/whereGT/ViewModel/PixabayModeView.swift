@@ -5,7 +5,7 @@ struct PixabayModeView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: 18) {
                 modelPicker
 
                 Divider()
@@ -49,7 +49,7 @@ struct PixabayModeView: View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Pixabay 検索")
                 .font(.headline)
-            HStack {
+            HStack(spacing: 12) {
                 TextField("Search Pixabay (e.g. dog, city, ocean)", text: $viewModel.pixabayQuery)
                     .textFieldStyle(.roundedBorder)
                     .submitLabel(.search)
@@ -109,7 +109,7 @@ struct PixabayModeView: View {
 
     private var aiLabelSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("AI's guess")
+            Text("AI Prediction")
                 .font(.headline)
             if let aiLabel = viewModel.aiLabel {
                 Text(labelDisplayText(for: aiLabel))
@@ -135,10 +135,9 @@ struct PixabayModeView: View {
 
     private var statusSection: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("Load / prediction status")
+            Text("Status")
                 .font(.headline)
             statusRow(title: "Mode", message: viewModel.gameMode.statusHint)
-            statusRow(title: "Labels", message: viewModel.labelStatusMessage)
             statusRow(title: "Model", message: viewModel.aiModelStatusMessage)
             statusRow(title: "Prediction", message: viewModel.predictionStatusMessage)
         }

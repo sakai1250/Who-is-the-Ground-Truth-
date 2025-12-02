@@ -5,7 +5,7 @@ struct LabelRouletteView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: 18) {
                 modelPicker
 
                 Divider()
@@ -67,7 +67,7 @@ struct LabelRouletteView: View {
 
             // クイズ開始ボタン（5問 / 10問）
             if !viewModel.quizIsActive && viewModel.quizSummary == nil {
-                HStack {
+                HStack(spacing: 12) {
                     Button {
                         viewModel.startRouletteQuiz(totalQuestions: 5)
                     } label: {
@@ -91,7 +91,7 @@ struct LabelRouletteView: View {
             // 進行状況
             if viewModel.quizIsActive {
                 HStack {
-                    Text("進行状況: 第\(viewModel.quizCurrentIndex)問 / 全\(viewModel.quizTotalQuestions)問")
+                    Text("第\(viewModel.quizCurrentIndex)問 / 全\(viewModel.quizTotalQuestions)問")
                     Spacer()
                     if viewModel.isLoadingPixabay {
                         ProgressView()
@@ -112,7 +112,7 @@ struct LabelRouletteView: View {
                 }
             }
 
-            // ステータス
+            // ステータス（簡潔に1行）
             Text(viewModel.challengeStatusMessage)
                 .font(.caption)
                 .foregroundStyle(.secondary)
@@ -128,7 +128,7 @@ struct LabelRouletteView: View {
                         .font(.headline)
                     Text(summary.comment)
                         .foregroundStyle(.secondary)
-                    HStack {
+                    HStack(spacing: 12) {
                         Button {
                             viewModel.startRouletteQuiz(totalQuestions: summary.total)
                         } label: {
@@ -196,7 +196,7 @@ struct LabelRouletteView: View {
 
     private var aiLabelSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("AI's guess")
+            Text("AI Prediction")
                 .font(.headline)
             if let aiLabel = viewModel.aiLabel {
                 Text(labelDisplayText(for: aiLabel))
@@ -222,7 +222,7 @@ struct LabelRouletteView: View {
 
     private var userAnswerSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Your answer (type to search labels)")
+            Text("Your Answer")
                 .font(.headline)
             TextField("Start typing a label", text: $viewModel.userQuery)
                 .textFieldStyle(.roundedBorder)
@@ -304,11 +304,9 @@ struct LabelRouletteView: View {
 
     private var statusSection: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("Load / prediction status")
+            Text("Status")
                 .font(.headline)
             statusRow(title: "Mode", message: viewModel.gameMode.statusHint)
-            statusRow(title: "Roulette", message: viewModel.challengeStatusMessage)
-            statusRow(title: "Labels", message: viewModel.labelStatusMessage)
             statusRow(title: "Model", message: viewModel.aiModelStatusMessage)
             statusRow(title: "Prediction", message: viewModel.predictionStatusMessage)
         }
